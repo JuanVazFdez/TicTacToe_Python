@@ -1,6 +1,6 @@
 import language
 import time
-from player import HumanPlayer, RandomComputerPlayer
+from player import HumanPlayer, RandomComputerPlayer, MasterComputerPlayer
 
 class TicTacToe:
     def __init__(self):
@@ -57,7 +57,7 @@ class TicTacToe:
 
 
 
-def play (game, xPlayer, oPlayer, texts, printGame = True):
+def play (game, xPlayer, oPlayer, texts, printGame, tiempo):
     if printGame:
         game.printBoardNums()
 
@@ -79,14 +79,12 @@ def play (game, xPlayer, oPlayer, texts, printGame = True):
             
             letter = 'O' if letter == 'X' else 'X'
 
-        time.sleep(0.8)
+        time.sleep(tiempo)
 
     if printGame:
         print(texts['tie'])
-            
 
-if __name__ == '__main__':
-    texts = {}
+def languageSelection():
     lang = "n/a"
     while lang != 'esp' and lang != 'eng':
         lang = input('To play in English, type "eng"\nPara jugar en Español, introduce "esp"').lower()
@@ -94,8 +92,53 @@ if __name__ == '__main__':
         texts = language.spanish
     elif lang == 'eng':
         texts = language.english
+    return texts
 
-    xPlayer = HumanPlayer('X', texts)
-    oPlayer = RandomComputerPlayer('O')
-    t = TicTacToe()
-    play(t, xPlayer, oPlayer, texts, printGame=True)
+def playerSelection(texts, letter):
+    selection = 'n/a'
+    while selection != 'H' and selection != 'S' and selection != 'M':
+        selection = input(texts['playerSelect']+ letter+' ').upper()
+    if selection == 'H':
+        player = HumanPlayer(letter, texts)
+    elif selection == 'S':
+        player = RandomComputerPlayer(letter)
+    elif selection == 'M':
+        player = MasterComputerPlayer(letter)
+    return player
+
+if __name__ == '__main__':
+    texts = languageSelection()
+
+    xWins = 0
+    oWins = 0
+    ties = 0
+
+    numGamesInput = input(texts['numGames'])
+    while numGamesInput.isnumeric() == False:
+        print(texts['notNumber'])
+        numGamesInput = input(texts['numGames'])
+
+    numGames=int(numGamesInput)
+
+    xPlayer = playerSelection(texts, 'X')
+    oPlayer = playerSelection(texts, 'O')
+
+    if isinstance(xPlayer, HumanPlayer) or isinstance(oPlayer, HumanPlayer):
+        printGame = True
+        tiempo = 0.8
+    else:
+        printGame = False
+        tiempo = 0
+
+    for _ in range(numGames):
+        t = TicTacToe()
+        result = play(t, xPlayer, oPlayer, texts, printGame, tiempo)
+
+        if result == 'X':
+            xWins += 1
+        elif result == 'O':
+            oWins += 1
+        else:
+            ties += 1
+    
+    print(texts['result'].format(numGames, xWins, oWins, ties))
