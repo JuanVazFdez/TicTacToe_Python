@@ -1,4 +1,3 @@
-import math
 import random
 
 class Player:
@@ -18,18 +17,20 @@ class RandomComputerPlayer(Player):
         return square
 
 class HumanPlayer(Player):
-    def __init__(self, letter):
+    def __init__(self, letter, texts):
         super().__init__(letter)
+        self.texts = texts
 
     def getMove(self, game):
-        validSquare = Falseval = None
+        validSquare = False
+        val = None
         while not validSquare:
-            square = input(self.letter + '\'s turn. Input move (0-8): ')
+            square = input(self.letter + self.texts['turn'])
             try:
                 val = int(square)
                 if val not in game.availableMoves():
                     raise ValueError
                 validSquare = True
             except ValueError:
-                print('Invalid square. Try again.')
+                print(self.texts['wrong'])
         return val

@@ -1,3 +1,4 @@
+import language
 import time
 from player import HumanPlayer, RandomComputerPlayer
 
@@ -56,7 +57,7 @@ class TicTacToe:
 
 
 
-def play (game, xPlayer, oPlayer, printGame = True):
+def play (game, xPlayer, oPlayer, texts, printGame = True):
     if printGame:
         game.printBoardNums()
 
@@ -68,12 +69,12 @@ def play (game, xPlayer, oPlayer, printGame = True):
             square = xPlayer.getMove(game)
         if game.makeMove(square, letter):
             if printGame:
-                print('\n\n\n\n\n\n', letter + f' makes a move to square {square}')
+                print('\n\n\n\n\n\n', letter + texts['move'], square)
                 game.printBoard()
                 print('')
             if game.currentWinner:
                 if printGame:
-                    print(letter +  ' wins!!!!')
+                    print(letter +  texts['win'])
                 return letter
             
             letter = 'O' if letter == 'X' else 'X'
@@ -81,11 +82,20 @@ def play (game, xPlayer, oPlayer, printGame = True):
         time.sleep(0.8)
 
     if printGame:
-        print('It\'s a tie!!!')
+        print(texts['tie'])
             
 
 if __name__ == '__main__':
-    xPlayer = HumanPlayer('X')
+    texts = {}
+    lang = "n/a"
+    while lang != 'esp' and lang != 'eng':
+        lang = input('To play in English, type "eng"\nPara jugar en Español, introduce "esp"').lower()
+    if lang == 'esp':
+        texts = language.spanish
+    elif lang == 'eng':
+        texts = language.english
+
+    xPlayer = HumanPlayer('X', texts)
     oPlayer = RandomComputerPlayer('O')
     t = TicTacToe()
-    play(t, xPlayer, oPlayer, printGame=True)
+    play(t, xPlayer, oPlayer, texts, printGame=True)
